@@ -8,6 +8,7 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="overflow-hidden bg-white shadow-sm dark:bg-gray-800 sm:rounded-lg px-4 py-6">
+
                 <div class="px-6 pt-6 mb-5 w-full sm:w-2/3 md:w-1/2 lg:w-1/3">
                     @if (request('search'))
                         <h2 class="pb-3 text-xl font-semibold leading-tight text-gray-800 dark:text-gray-200">
@@ -15,20 +16,22 @@
                         </h2>
                     @endif
 
-                    <form class="flex items-center gap-3">
-                        <x-text-input 
-                            id="search" 
-                            name="search" 
-                            type="text" 
-                            class="w-5/6" 
-                            placeholder="Search by name or email ..." 
-                            value="{{ request('search') }}" 
-                            autofocus 
-                        />
-                        <x-primary-button type="submit">
-                            {{ __('Search') }}
-                        </x-primary-button>
-                    </form>
+                    <div class="mb-6">
+                        <form class="flex items-center gap-3">
+                            <x-text-input 
+                                id="search" 
+                                name="search" 
+                                type="text" 
+                                class="w-5/6" 
+                                placeholder="Search by name or email ..." 
+                                value="{{ request('search') }}" 
+                                autofocus 
+                            />
+                            <x-primary-button type="submit">
+                                {{ __('Search') }}
+                            </x-primary-button>
+                        </form>
+                    </div>
                 </div>
 
                 <div class="px-6 text-xl text-gray-900 dark:text-gray-100">
@@ -79,19 +82,46 @@
                                     <td class="px-3 py-1 whitespace-nowrap dark:text-gray-100">
                                         <p>
                                             {{ $data->todos?->count() ?? 0 }}
-                                            <span> 
+                                            <span>
                                                 <span class="text-green-600 dark:text-green-400">
                                                     ({{ $data->todos?->where('is_done', true)->count() ?? 0 }})
                                                 </span>/ 
                                                 <span class="text-blue-600 dark:text-blue-400">
                                                     {{ $data->todos?->where('is_done', false)->count() ?? 0 }}
-                                                </span> 
+                                                </span>
                                             </span>
                                         </p>
                                     </td>
                                     <td class="px-6 py-4">
-                                        <div class="flex space-x-3">
-                                            <a href="{{ route('user.index', $data) }}" class="text-blue-400 hover:underline transition duration-150 ease-in-out">Edit</a>
+                                        <div class="flex items-center space-x-4">
+                                            @if ($data->is_admin)
+                                                <form action="{{ route('user.removeadmin', $data) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                            class="text-blue-600 dark:text-blue-400 whitespace-nowrap">
+                                                        Remove Admin
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form action="{{ route('user.makeadmin', $data) }}" method="POST">
+                                                    @csrf
+                                                    @method('PATCH')
+                                                    <button type="submit"
+                                                            class="text-red-600 dark:text-red-400 whitespace-nowrap">
+                                                        Make Admin
+                                                    </button>
+                                                </form>
+                                            @endif
+
+                                            <form action="{{ route('user.destroy', $data) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this user?');">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit"
+                                                        class="text-red-600 dark:text-red-400 whitespace-nowrap">
+                                                    Delete
+                                                </button>
+                                            </form>
                                         </div>
                                     </td>
                                 </tr>
@@ -111,6 +141,7 @@
                         {{ $users->links() }}
                     </div>
                 @endif
+
             </div>
         </div>
     </div>

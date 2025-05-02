@@ -27,24 +27,50 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse ($todos as $data)
-                                <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bggray-800 border-b dark:border-gray-700 border-gray-200">
+                            @forelse ($todos as $todo)
+                                <tr class="odd:bg-white odd:dark:bg-gray-900 even:bg-gray-50 even:dark:bg-gray-800 border-b dark:border-gray-700 border-gray-200">
                                     <td class="px-6 py-4 font-medium">
-                                        <a href="{{ route('todo.edit', $data) }}"
+                                        <a href="{{ route('todo.edit', $todo) }}"
                                            class="text-gray-600 dark:text-gray-300 hover:underline text-sm">
-                                            {{ $data->title }}
+                                            {{ $todo->title }}
                                         </a>
                                     </td>
                                     <td class="px-6 py-4">
-                                        @if (!$data->is_done)
-                                        <span class="text-red-600">Ongoing</span>
+                                        @if (!$todo->is_done)
+                                            <span class="text-red-600">Ongoing</span>
                                         @else
-                                        <span class="text-green-600">Completed</span>
+                                            <span class="text-green-600">Completed</span>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4">
-                                        <a href="{{ route('todo.edit', $data) }}"
+                                    <td class="px-6 py-4 flex space-x-8">
+                                        <a href="{{ route('todo.edit', $todo) }}"
                                            class="text-blue-600 hover:underline text-sm">Edit</a>
+
+                                        @if (!$todo->is_done)
+                                            <form action="{{ route('todo.complete', $todo) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="text-green-600 dark:text-green-400 text-sm">
+                                                    Complete
+                                                </button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route('todo.uncomplete', $todo) }}" method="POST">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="text-blue-600 dark:text-blue-400 text-sm">
+                                                    Uncomplete
+                                                </button>
+                                            </form>
+                                        @endif
+
+                                        <form action="{{ route('todo.destroy', $todo) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="text-red-600 dark:text-red-400 text-sm">
+                                                Delete
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             @empty
@@ -58,7 +84,18 @@
                     </table>
                 </div>
             </div>
+
+            @if ($todosCompleted > 0)
+                <div class="p-6 text-xl text-gray-900 dark:text-gray-100">
+                    <form action="{{ route('todo.deleteallcompleted') }}" method="POST">
+                        @csrf
+                        @method('DELETE')
+                        <x-primary-button>
+                            Delete All Completed Tasks
+                        </x-primary-button>
+                    </form>
+                </div>
+            @endif
         </div>
     </div>
 </x-app-layout>
-
