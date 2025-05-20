@@ -19,7 +19,7 @@ class TodoFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => rand(1, 100), // Asumsikan ID user acak
+            'user_id' => rand(1, 100), 
             'title' => ucwords(fake()->sentence()),
             'is_done' => rand(0, 1), 
             'category_id' => rand(1, 10),

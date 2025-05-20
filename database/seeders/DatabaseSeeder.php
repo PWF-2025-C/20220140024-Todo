@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
     // Menambahkan kategori
     $this->call(CategorySeeder::class);
     
-    // Seeder untuk user dan todo
+  
     User::factory()->create([
         'name' => 'Admin',
         'email' => 'admin@admin.com',
