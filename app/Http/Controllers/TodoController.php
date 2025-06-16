@@ -23,7 +23,7 @@ class TodoController extends Controller
             ->where('user_id', Auth::id())
             ->orderBy('is_done', 'asc')
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->get();
 
         $todosCompleted = Todo::where('user_id', Auth::id())
             ->where('is_done', true)
@@ -34,7 +34,7 @@ class TodoController extends Controller
 
     public function create()
     {
-         $categories = Category::all(); 
+        $categories = Category::all(); 
         return view('todo.create', compact('categories'));
     }
 
@@ -62,7 +62,6 @@ class TodoController extends Controller
         $categories = Category::all();
         return view('todo.edit', compact('todo', 'categories'));
     }
-
 
     public function update(Request $request, Todo $todo)
     {
@@ -105,7 +104,7 @@ class TodoController extends Controller
         return redirect()->route('todo.index')->with('success', 'Todo marked as incomplete.');
     }
 
-    public function deleteAllCompleted()
+    public function destroyCompleted()
     {
         Todo::where('user_id', Auth::id())
             ->where('is_done', true)
